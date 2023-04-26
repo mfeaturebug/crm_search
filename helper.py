@@ -2,15 +2,20 @@ import numpy as np
 import openai
 import pandas as pd
 import streamlit as st
-import os
-import glob
 
+
+# import os
+# import glob
+#
+# csv_dir = os.path.join("./embeddings/", "*.csv")
+# files = glob.glob(csv_dir)
+# print(files)
+# # joining files with concat and read_csv
+# df = pd.concat(map(pd.read_csv, files), ignore_index=True)
+# df.to_csv('./combined_embeddings.csv', index=False)
 
 @st.cache_data
 def get_embeddings_data_frame():
-    # csv_dir = os.path.join("./embeddings/", "*.csv")
-    # files = glob.glob(csv_dir)
-    # df = pd.concat(map(pd.read_csv, files), ignore_index=True)
     embeddings_path = "./embeddings/combined_embeddings.csv"
     df = pd.read_csv(embeddings_path)
     df["embedding"] = df.embedding.apply(eval).apply(np.array)
@@ -66,5 +71,5 @@ def get_gpt_response(context, query):
 
 def get_contact_response(query):
     df = get_embeddings_data_frame()
-    records = get_semantic_records(df, query, n=50)
+    records = get_semantic_records(df, query, n=50)[['f_name', 'l_name', 'created', 'notes']]
     return records
